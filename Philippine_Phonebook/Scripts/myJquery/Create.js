@@ -11,6 +11,8 @@
         data.append('city', $('#city').val());
         data.append('province', $('#province').val());
         data.append('zip_code', $('#zip_code').val());
+        data.append('status', $('#status').val());
+        alert($('#status').val())
 
         $.ajax({
             url: '../Home/postCreate',

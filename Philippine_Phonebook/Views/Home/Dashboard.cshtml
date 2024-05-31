@@ -49,7 +49,8 @@
     </script>
 </body>
 
-<h2>Philippines Phonebook</h2><br />
+<h2>Philippines Phonebook</h2>
+<br />
 <div class="mb-3">
     <h6>Search (use phone number)</h6>
     <div class="input-group">
@@ -57,7 +58,6 @@
         <button id="btn_search_num" class="btn btn-primary">Search</button>
     </div>
 </div>
-
 <div id="search_result"></div>
 
 <div class="mb-3 text-end">
@@ -96,6 +96,14 @@
                             <div class="form-group">
                                 <label for="email_add">Email Address</label>
                                 <input type="text" id="email_add" class="form-control" />
+                            </div>
+                            <div class="form-group">
+                                <label for="prod_color">Status</label>
+                                <select class="custom-select form-control" id="status">
+                                    <option selected>Choose Status</option>
+                                    <option>Active</option>
+                                    <option>Inactive</option>
+                                </select>
                             </div>
                         </div>
                         <div class="col-md-6">
@@ -149,13 +157,9 @@
                                 <th width="15%" style="text-align:center">NAME</th>
                                 <th width="10%">PHONE NUMBER</th>
                                 <th width="10%">MOBILE NUMBER</th>
-                                <th width="10%">EMAIL ADDRESS</th>
-                                <th width="8%">HOUSE #</th>
-                                <th width="8%">STREET</th>
-                                <th width="10%">CITY</th>
-                                <th width="10%">PROVINCE</th>
-                                <th width="7%">ZIP CODE</th>
-                                <th width="7%">AREA CODE</th>
+                                <th width="10%">STATUS</th>
+                                @*<th width="5%">ACTIONS</th>
+                                    <th width="5%"></th>*@
                             </tr>
                         </thead>
                         <tbody>
@@ -165,13 +169,13 @@
                                     <td style="text-align:center" class="prod_id">@reader["NAME"]</td>
                                     <td>@reader["PHONE_NUM"]</td>
                                     <td>@reader["MOBILE_NUM"]</td>
-                                    <td>@reader["EMAIL_ADD"]</td>
-                                    <td>@reader["HOUSE_NUM"]</td>
-                                    <td>@reader["STREET"]</td>
-                                    <td>@reader["CITY"]</td>
-                                    <td>@reader["PROVINCE"]</td>
-                                    <td>@reader["ZIP_CODE"]</td>
-                                    <td>@reader["AREA_CODE"]</td>
+                                    <td>@reader["STATUS"]</td>
+                                    @*<td>
+                                            <button type="button" name="edit_btn" class="btn btn-primary btnUpdate" id="btn_update" data-bs-toggle="modal" data-bs-target="#updateModal">Update</button>
+                                        </td>
+                                        <td>
+                                            <button type="button" name="edit_btn" class="btn btn-danger btnUpdate" id="btn_" data-bs-toggle="modal" data-bs-target="#deleteModal">Delete</button>
+                                        </td>*@
                                 </tr>
                             }
                         </tbody>
@@ -185,6 +189,28 @@
         }
     }
 }
+<div class="modal fade" id="updateModal" tabindex="-1" aria-labelledby="updateModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="updateModalLabel">Update Mobile Number</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="newMobileNumber">New Mobile Number</label>
+                    <input type="text" id="newMobileNumber" class="form-control" placeholder="Enter new mobile number" />
+                </div>
+                <input type="hidden" id="oldMobileNumber" />
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="btnSubmitUpdate">Update</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 <script src="~/Scripts/Jquery/jquery-3.7.1.min.js"></script>
 <script src="~/Scripts/myJquery/Create.js"></script>

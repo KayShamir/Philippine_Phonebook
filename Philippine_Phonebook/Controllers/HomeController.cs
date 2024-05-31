@@ -47,6 +47,7 @@ namespace Philippine_Phonebook.Controllers
             string street = Request["street"];
             string city = Request["city"];
             string province = Request["province"];
+            string status = Request["status"];
             var zip_code = Convert.ToInt32(Request["zip_code"]);
 
             using (var db = new SqlConnection(conn_str))
@@ -55,8 +56,8 @@ namespace Philippine_Phonebook.Controllers
                 using (var cmd = db.CreateCommand())
                 {
                     cmd.CommandType = CommandType.Text;
-                    cmd.CommandText = "INSERT INTO PHONEBOOK (NAME, AREA_CODE, PHONE_NUM, MOBILE_NUM, HOUSE_NUM, STREET, CITY, PROVINCE, ZIP_CODE, EMAIL_ADD) " +
-                        "VALUES (@name, @area_code, @phone_num, @mobile_num, @house_num, @street, @city, @province, @zip_code, @email_add)";
+                    cmd.CommandText = "INSERT INTO PHONEBOOK (NAME, AREA_CODE, PHONE_NUM, MOBILE_NUM, HOUSE_NUM, STREET, CITY, PROVINCE, ZIP_CODE, EMAIL_ADD, STATUS) " +
+                        "VALUES (@name, @area_code, @phone_num, @mobile_num, @house_num, @street, @city, @province, @zip_code, @email_add, @status)";
                     cmd.Parameters.AddWithValue("@name", name);
                     cmd.Parameters.AddWithValue("@area_code", area_code);
                     cmd.Parameters.AddWithValue("@phone_num", phone_num);
@@ -67,12 +68,34 @@ namespace Philippine_Phonebook.Controllers
                     cmd.Parameters.AddWithValue("@province", province);
                     cmd.Parameters.AddWithValue("@zip_code", zip_code);
                     cmd.Parameters.AddWithValue("@email_add", email_add);
+                    cmd.Parameters.AddWithValue("@status", status);
 
                     cmd.ExecuteNonQuery();
                 }
             }
             return Json(data, JsonRequestBehavior.AllowGet);
 
+        }
+        [HttpPost]
+        public JsonResult IsPhoneNumberUnique(string phoneNumber)
+        {
+            bool isUnique = true;
+            using (var db = new SqlConnection(conn_str))
+            {
+                db.Open();
+                using (var cmd = db.CreateCommand())
+                {
+                    cmd.CommandType = CommandType.Text;
+                    cmd.CommandText = "SELECT COUNT(*) FROM PHONEBOOK WHERE MOBILE_NUM = @PhoneNumber";
+                    cmd.Parameters.AddWithValue("@PhoneNumber", phoneNumber);
+                    int count = (int)cmd.ExecuteScalar();
+                    if (count > 0)
+                    {
+                        isUnique = false;
+                    }
+                }
+            }
+            return Json(isUnique);
         }
         [HttpPost]
         public ActionResult SearchPhonebook(string phoneNumber)
@@ -91,20 +114,20 @@ namespace Philippine_Phonebook.Controllers
                     {
                         if (reader.HasRows)
                         {
-                            result.Append("<table class='table table-striped'><thead class='bg-secondary text-white'><tr><th>Name</th><th>Phone Number</th><th>Mobile Number</th><th>Email Address</th><th>House Number</th><th>Street</th><th>City</th><th>Province</th><th>Zip Code</th><th>Area Code</th></tr></thead><tbody>");
+                            result.Append("<table class='table table-striped'><thead class='bg-secondary text-white'><tr><th style=\"text-align:center\">Name</th><th>Phone Number</th><th>Mobile Number</th><th>Status</th><th class=\"ml-5\"></th></tr></thead><tbody>");
                             while (reader.Read())
                             {
+                                string mobileNum = reader["MOBILE_NUM"].ToString();
                                 result.Append("<tr>");
-                                result.Append($"<td>{reader["NAME"]}</td>");
+                                result.Append($"<td style=\"text-align:center\">{reader["NAME"]}</td>");
                                 result.Append($"<td>{reader["PHONE_NUM"]}</td>");
-                                result.Append($"<td>{reader["MOBILE_NUM"]}</td>");
-                                result.Append($"<td>{reader["EMAIL_ADD"]}</td>");
-                                result.Append($"<td>{reader["HOUSE_NUM"]}</td>");
-                                result.Append($"<td>{reader["STREET"]}</td>");
-                                result.Append($"<td>{reader["CITY"]}</td>");
-                                result.Append($"<td>{reader["PROVINCE"]}</td>");
-                                result.Append($"<td>{reader["ZIP_CODE"]}</td>");
-                                result.Append($"<td>{reader["AREA_CODE"]}</td>");
+                                result.Append($"<td>{mobileNum}</td>");
+                                result.Append($"<td>{reader["STATUS"]}</td>");
+                                result.Append("<td>");
+                                result.Append($"<button style=\"margin-left:20%\" class='btn btn-primary btn_update width='10%'' data-mobile='{mobileNum}'>Update</button>");
+                                result.Append($"<button style=\"margin-left:5%\" class='btn btn-warning btn_soft_delete' data-mobile='{mobileNum}'>Soft Delete</button>");
+                                result.Append($"<button style=\"margin-left:5%\" class='btn btn-danger btn_hard_delete' data-mobile='{mobileNum}'>Hard Delete</button>");
+                                result.Append("</td>");
                                 result.Append("</tr>");
                             }
                             result.Append("</tbody></table>");
@@ -119,5 +142,79 @@ namespace Philippine_Phonebook.Controllers
             return Content(result.ToString());
         }
 
+
+        [HttpPost]
+        public ActionResult UpdatePhoneNumber(string oldMobileNumber, string newMobileNumber)
+        {
+            using (var db = new SqlConnection(conn_str))
+            {
+                db.Open();
+                using (var cmd = db.CreateCommand())
+                {
+                    cmd.CommandType = CommandType.Text;
+                    cmd.CommandText = "UPDATE PHONEBOOK SET MOBILE_NUM = @NewMobileNumber WHERE MOBILE_NUM = @OldMobileNumber";
+                    cmd.Parameters.AddWithValue("@NewMobileNumber", newMobileNumber);
+                    cmd.Parameters.AddWithValue("@OldMobileNumber", oldMobileNumber);
+
+                    int rowsAffected = cmd.ExecuteNonQuery();
+                    if (rowsAffected > 0)
+                    {
+                        return Content("Mobile number updated successfully.");
+                    }
+                    else
+                    {
+                        return Content("Failed to update mobile number.");
+                    }
+                }
+            }
+        }
+        [HttpPost]
+        public ActionResult SoftDeletePhoneNumber(string mobileNumber)
+        {
+            using (var db = new SqlConnection(conn_str))
+            {
+                db.Open();
+                using (var cmd = db.CreateCommand())
+                {
+                    cmd.CommandType = CommandType.Text;
+                    cmd.CommandText = "UPDATE PHONEBOOK SET STATUS = 'Inactive' WHERE MOBILE_NUM = @MobileNumber";
+                    cmd.Parameters.AddWithValue("@MobileNumber", mobileNumber);
+
+                    int rowsAffected = cmd.ExecuteNonQuery();
+                    if (rowsAffected > 0)
+                    {
+                        return Content("Phone number status updated to inactive.");
+                    }
+                    else
+                    {
+                        return Content("Failed to update phone number status.");
+                    }
+                }
+            }
+        }
+        [HttpPost]
+        public ActionResult HardDeletePhoneNumber(string mobileNumber)
+        {
+            using (var db = new SqlConnection(conn_str))
+            {
+                db.Open();
+                using (var cmd = db.CreateCommand())
+                {
+                    cmd.CommandType = CommandType.Text;
+                    cmd.CommandText = "DELETE FROM PHONEBOOK WHERE MOBILE_NUM = @MobileNumber";
+                    cmd.Parameters.AddWithValue("@MobileNumber", mobileNumber);
+
+                    int rowsAffected = cmd.ExecuteNonQuery();
+                    if (rowsAffected > 0)
+                    {
+                        return Content("Phone number deleted successfully.");
+                    }
+                    else
+                    {
+                        return Content("Failed to delete phone number.");
+                    }
+                }
+            }
+        }
     }
 }
