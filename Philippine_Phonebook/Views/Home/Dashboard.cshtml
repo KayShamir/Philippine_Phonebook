@@ -53,18 +53,18 @@
 <br />
 <div class="mb-3">
     <h6>Search (use phone number)</h6>
-    <div class="input-group">
+    <div class="input-group w-50">
         <input type="number" id="search_num" class="form-control" placeholder="Enter Phone Number" />
         <button id="btn_search_num" class="btn btn-primary">Search</button>
+    </div>
+    <div class="mb-3 text-end w-50" style="margin-top: -3.4%; margin-left: 50%">
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addModal">
+            Add Phonebook
+        </button>
     </div>
 </div>
 <div id="search_result"></div>
 
-<div class="mb-3 text-end">
-    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addModal">
-        Add Phonebook
-    </button>
-</div>
 
 <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">

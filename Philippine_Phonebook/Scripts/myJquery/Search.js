@@ -11,7 +11,6 @@
                 success: function (response) {
                     $('#search_result').html(response);
                     attachButtonHandlers(); // Attach event handlers to the new buttons
-                    location.reload();
                 },
                 error: function (xhr, status, error) {
                     console.error("Error occurred: " + error);
@@ -39,7 +38,6 @@
                         toastr.success(response);
                         // Optionally refresh the search results
                         $('#btn_search_num').click();
-                        location.reload();
                     },
                     error: function (xhr, status, error) {
                         console.error("Error occurred: " + error);
@@ -60,7 +58,6 @@
                         toastr.success(response);
                         // Optionally refresh the search results
                         $('#btn_search_num').click();
-                        location.reload();
                     },
                     error: function (xhr, status, error) {
                         console.error("Error occurred: " + error);

@@ -50,32 +50,53 @@ namespace Philippine_Phonebook.Controllers
             string status = Request["status"];
             var zip_code = Convert.ToInt32(Request["zip_code"]);
 
+            bool isUnique = true;
+
             using (var db = new SqlConnection(conn_str))
             {
                 db.Open();
-                using (var cmd = db.CreateCommand())
+                using (var cmdCheck = db.CreateCommand())
                 {
-                    cmd.CommandType = CommandType.Text;
-                    cmd.CommandText = "INSERT INTO PHONEBOOK (NAME, AREA_CODE, PHONE_NUM, MOBILE_NUM, HOUSE_NUM, STREET, CITY, PROVINCE, ZIP_CODE, EMAIL_ADD, STATUS) " +
-                        "VALUES (@name, @area_code, @phone_num, @mobile_num, @house_num, @street, @city, @province, @zip_code, @email_add, @status)";
-                    cmd.Parameters.AddWithValue("@name", name);
-                    cmd.Parameters.AddWithValue("@area_code", area_code);
-                    cmd.Parameters.AddWithValue("@phone_num", phone_num);
-                    cmd.Parameters.AddWithValue("@mobile_num", mobile_num);
-                    cmd.Parameters.AddWithValue("@house_num", house_num);
-                    cmd.Parameters.AddWithValue("@street", street);
-                    cmd.Parameters.AddWithValue("@city", city);
-                    cmd.Parameters.AddWithValue("@province", province);
-                    cmd.Parameters.AddWithValue("@zip_code", zip_code);
-                    cmd.Parameters.AddWithValue("@email_add", email_add);
-                    cmd.Parameters.AddWithValue("@status", status);
+                    cmdCheck.CommandType = CommandType.Text;
+                    cmdCheck.CommandText = "SELECT COUNT(*) FROM PHONEBOOK WHERE MOBILE_NUM = @PhoneNumber";
+                    cmdCheck.Parameters.AddWithValue("@PhoneNumber", mobile_num);
+                    int count = (int)cmdCheck.ExecuteScalar();
+                    if (count > 0)
+                    {
+                        isUnique = false;
+                    }
+                }
 
-                    cmd.ExecuteNonQuery();
+                if (isUnique)
+                {
+                    using (var cmd = db.CreateCommand())
+                    {
+                        cmd.CommandType = CommandType.Text;
+                        cmd.CommandText = "INSERT INTO PHONEBOOK (NAME, AREA_CODE, PHONE_NUM, MOBILE_NUM, HOUSE_NUM, STREET, CITY, PROVINCE, ZIP_CODE, EMAIL_ADD, STATUS) " +
+                            "VALUES (@name, @area_code, @phone_num, @mobile_num, @house_num, @street, @city, @province, @zip_code, @email_add, @status)";
+                        cmd.Parameters.AddWithValue("@name", name);
+                        cmd.Parameters.AddWithValue("@area_code", area_code);
+                        cmd.Parameters.AddWithValue("@phone_num", phone_num);
+                        cmd.Parameters.AddWithValue("@mobile_num", mobile_num);
+                        cmd.Parameters.AddWithValue("@house_num", house_num);
+                        cmd.Parameters.AddWithValue("@street", street);
+                        cmd.Parameters.AddWithValue("@city", city);
+                        cmd.Parameters.AddWithValue("@province", province);
+                        cmd.Parameters.AddWithValue("@zip_code", zip_code);
+                        cmd.Parameters.AddWithValue("@email_add", email_add);
+                        cmd.Parameters.AddWithValue("@status", status);
+
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+                else
+                {
+                    return Json(new { success = false, message = "Phone number already exists. Please enter a unique phone number." }, JsonRequestBehavior.AllowGet);
                 }
             }
-            return Json(data, JsonRequestBehavior.AllowGet);
-
+            return Json(new { success = true, message = "Product added successfully." }, JsonRequestBehavior.AllowGet);
         }
+
         [HttpPost]
         public JsonResult IsPhoneNumberUnique(string phoneNumber)
         {
@@ -97,6 +118,7 @@ namespace Philippine_Phonebook.Controllers
             }
             return Json(isUnique);
         }
+
         [HttpPost]
         public ActionResult SearchPhonebook(string phoneNumber)
         {
