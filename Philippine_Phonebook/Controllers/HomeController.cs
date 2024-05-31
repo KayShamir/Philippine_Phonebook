@@ -35,6 +35,7 @@ namespace Philippine_Phonebook.Controllers
             return View();
 
         }
+        [HttpPost]
         public ActionResult PostCreate()
         {
             var data = new List<object>();
@@ -58,8 +59,8 @@ namespace Philippine_Phonebook.Controllers
                 using (var cmdCheck = db.CreateCommand())
                 {
                     cmdCheck.CommandType = CommandType.Text;
-                    cmdCheck.CommandText = "SELECT COUNT(*) FROM PHONEBOOK WHERE MOBILE_NUM = @PhoneNumber";
-                    cmdCheck.Parameters.AddWithValue("@PhoneNumber", mobile_num);
+                    cmdCheck.CommandText = "SELECT COUNT(*) FROM PHONEBOOK WHERE PHONE_NUM = @PhoneNumber";
+                    cmdCheck.Parameters.AddWithValue("@PhoneNumber", phone_num);
                     int count = (int)cmdCheck.ExecuteScalar();
                     if (count > 0)
                     {
@@ -94,7 +95,7 @@ namespace Philippine_Phonebook.Controllers
                     return Json(new { success = false, message = "Phone number already exists. Please enter a unique phone number." }, JsonRequestBehavior.AllowGet);
                 }
             }
-            return Json(new { success = true, message = "Product added successfully." }, JsonRequestBehavior.AllowGet);
+            return Json(new { success = true, message = "Phonebook added successfully." }, JsonRequestBehavior.AllowGet);
         }
 
         [HttpPost]
@@ -107,7 +108,7 @@ namespace Philippine_Phonebook.Controllers
                 using (var cmd = db.CreateCommand())
                 {
                     cmd.CommandType = CommandType.Text;
-                    cmd.CommandText = "SELECT COUNT(*) FROM PHONEBOOK WHERE MOBILE_NUM = @PhoneNumber";
+                    cmd.CommandText = "SELECT COUNT(*) FROM PHONEBOOK WHERE PHONE_NUM = @PhoneNumber";
                     cmd.Parameters.AddWithValue("@PhoneNumber", phoneNumber);
                     int count = (int)cmd.ExecuteScalar();
                     if (count > 0)
@@ -118,6 +119,7 @@ namespace Philippine_Phonebook.Controllers
             }
             return Json(isUnique);
         }
+
 
         [HttpPost]
         public ActionResult SearchPhonebook(string phoneNumber)
@@ -139,14 +141,25 @@ namespace Philippine_Phonebook.Controllers
                             result.Append("<table class='table table-striped'><thead class='bg-secondary text-white'><tr><th style=\"text-align:center\">Name</th><th>Phone Number</th><th>Mobile Number</th><th>Status</th><th class=\"ml-5\"></th></tr></thead><tbody>");
                             while (reader.Read())
                             {
+                                string name = reader["NAME"].ToString();
+                                string areaCode = reader["AREA_CODE"].ToString();
+                                string phoneNum = reader["PHONE_NUM"].ToString();
                                 string mobileNum = reader["MOBILE_NUM"].ToString();
+                                string email = reader["EMAIL_ADD"].ToString();
+                                string status = reader["STATUS"].ToString();
+                                string houseNum = reader["HOUSE_NUM"].ToString();
+                                string street = reader["STREET"].ToString();
+                                string city = reader["CITY"].ToString();
+                                string province = reader["PROVINCE"].ToString();
+                                string zipCode = reader["ZIP_CODE"].ToString();
+
                                 result.Append("<tr>");
-                                result.Append($"<td style=\"text-align:center\">{reader["NAME"]}</td>");
-                                result.Append($"<td>{reader["PHONE_NUM"]}</td>");
+                                result.Append($"<td style=\"text-align:center\">{name}</td>");
+                                result.Append($"<td>{phoneNum}</td>");
                                 result.Append($"<td>{mobileNum}</td>");
-                                result.Append($"<td>{reader["STATUS"]}</td>");
+                                result.Append($"<td>{status}</td>");
                                 result.Append("<td>");
-                                result.Append($"<button style=\"margin-left:20%\" class='btn btn-primary btn_update width='10%'' data-mobile='{mobileNum}'>Update</button>");
+                                result.Append($"<button style=\"margin-left:20%\" class='btn btn-primary btn_update' data-name='{name}' data-areacode='{areaCode}' data-phonenumber='{phoneNum}' data-mobilenumber='{mobileNum}' data-email='{email}' data-status='{status}' data-house='{houseNum}' data-street='{street}' data-city='{city}' data-province='{province}' data-zipcode='{zipCode}'>Update</button>");
                                 result.Append($"<button style=\"margin-left:5%\" class='btn btn-warning btn_soft_delete' data-mobile='{mobileNum}'>Soft Delete</button>");
                                 result.Append($"<button style=\"margin-left:5%\" class='btn btn-danger btn_hard_delete' data-mobile='{mobileNum}'>Hard Delete</button>");
                                 result.Append("</td>");
@@ -163,6 +176,7 @@ namespace Philippine_Phonebook.Controllers
             }
             return Content(result.ToString());
         }
+
 
 
         [HttpPost]
@@ -190,6 +204,7 @@ namespace Philippine_Phonebook.Controllers
                 }
             }
         }
+
         [HttpPost]
         public ActionResult SoftDeletePhoneNumber(string mobileNumber)
         {
@@ -214,6 +229,7 @@ namespace Philippine_Phonebook.Controllers
                 }
             }
         }
+
         [HttpPost]
         public ActionResult HardDeletePhoneNumber(string mobileNumber)
         {

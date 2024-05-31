@@ -23,7 +23,6 @@
                         data.append('province', $('#province').val());
                         data.append('zip_code', $('#zip_code').val());
                         data.append('status', $('#status').val());
-                        alert($('#status').val());
 
                         $.ajax({
                             url: '../Home/PostCreate',
@@ -32,15 +31,18 @@
                             processData: false,
                             contentType: false,
                             success: function (data) {
-                                console.log(data);
-                                toastr.success('Product added successfully.');
-                                $('#addModal').modal('hide');
-                                setTimeout(function () {
-                                    location.reload();
-                                }, 3000);
+                                if (data.success) {
+                                    toastr.success(data.message);
+                                    $('#addModal').modal('hide');
+                                    setTimeout(function () {
+                                        location.reload();
+                                    }, 1000);
+                                } else {
+                                    toastr.error(data.message);
+                                }
                             },
                             error: function () {
-                                alert('Error uploading file.');
+                                toastr.error('Error uploading data.');
                             }
                         });
                     } else {
@@ -48,7 +50,7 @@
                     }
                 },
                 error: function () {
-                    alert('Error checking phone number uniqueness.');
+                    toastr.error('Error checking phone number uniqueness.');
                 }
             });
         });

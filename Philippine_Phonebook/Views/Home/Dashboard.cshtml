@@ -39,7 +39,7 @@
             "onclick": null,
             "showDuration": "300",
             "hideDuration": "1000",
-            "timeOut": "3000",
+            "timeOut": "1000",
             "extendedTimeOut": "1000",
             "showEasing": "swing",
             "hideEasing": "linear",
@@ -49,12 +49,12 @@
     </script>
 </body>
 
-<h2>Philippines Phonebook</h2>
-<br />
+<h2>Philippine Phonebook</h2>
+<br>
 <div class="mb-3">
     <h6>Search (use phone number)</h6>
     <div class="input-group w-50">
-        <input type="number" id="search_num" class="form-control" placeholder="Enter Phone Number" />
+        <input type="number" id="search_num" class="form-control" placeholder="Enter Phone Number">
         <button id="btn_search_num" class="btn btn-primary">Search</button>
     </div>
     <div class="mb-3 text-end w-50" style="margin-top: -3.4%; margin-left: 50%">
@@ -65,7 +65,7 @@
 </div>
 <div id="search_result"></div>
 
-
+<!-- Add Modal -->
 <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -79,23 +79,23 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="person_name">Person Name</label>
-                                <input type="text" id="person_name" class="form-control" />
+                                <input type="text" id="person_name" class="form-control">
                             </div>
                             <div class="form-group">
                                 <label for="area_code">Area Code</label>
-                                <input type="text" id="area_code" class="form-control" placeholder="input 3 digits/char" />
+                                <input type="text" id="area_code" class="form-control" placeholder="input 3 digits/char">
                             </div>
                             <div class="form-group">
                                 <label for="phone_num">Phone Number</label>
-                                <input type="text" id="phone_num" class="form-control" placeholder="input 7 digits/char" />
+                                <input type="text" id="phone_num" class="form-control" placeholder="input 7 digits/char">
                             </div>
                             <div class="form-group">
                                 <label for="mobile_num">Mobile Number</label>
-                                <input type="text" id="mobile_num" class="form-control" placeholder="input 11 digits/char" />
+                                <input type="text" id="mobile_num" class="form-control" placeholder="input 11 digits/char">
                             </div>
                             <div class="form-group">
                                 <label for="email_add">Email Address</label>
-                                <input type="text" id="email_add" class="form-control" />
+                                <input type="text" id="email_add" class="form-control">
                             </div>
                             <div class="form-group">
                                 <label for="prod_color">Status</label>
@@ -109,23 +109,23 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="house_num">House Number</label>
-                                <input type="text" id="house_num" class="form-control" />
+                                <input type="text" id="house_num" class="form-control">
                             </div>
                             <div class="form-group">
                                 <label for="street">Street</label>
-                                <input type="text" id="street" class="form-control" />
+                                <input type="text" id="street" class="form-control">
                             </div>
                             <div class="form-group">
                                 <label for="city">City</label>
-                                <input type="text" id="city" class="form-control" />
+                                <input type="text" id="city" class="form-control">
                             </div>
                             <div class="form-group">
                                 <label for="province">Province</label>
-                                <input type="text" id="province" class="form-control" />
+                                <input type="text" id="province" class="form-control">
                             </div>
                             <div class="form-group">
                                 <label for="zip_code">Zip Code</label>
-                                <input type="number" id="zip_code" class="form-control" />
+                                <input type="number" id="zip_code" class="form-control">
                             </div>
                         </div>
                     </div>
@@ -139,56 +139,7 @@
     </div>
 </div>
 
-@{
-    using (var db = new SqlConnection(conn_str))
-    {
-        db.Open();
-        using (var cmd = db.CreateCommand())
-        {
-            cmd.CommandType = CommandType.Text;
-            cmd.CommandText = "SELECT * FROM PHONEBOOK";
-            using (var reader = cmd.ExecuteReader())
-            {
-                if (reader.HasRows)
-                {
-                    <table class="table table-striped">
-                        <thead class="bg-secondary text-white">
-                            <tr>
-                                <th width="15%" style="text-align:center">NAME</th>
-                                <th width="10%">PHONE NUMBER</th>
-                                <th width="10%">MOBILE NUMBER</th>
-                                <th width="10%">STATUS</th>
-                                @*<th width="5%">ACTIONS</th>
-                                    <th width="5%"></th>*@
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @while (reader.Read())
-                            {
-                                <tr class="items">
-                                    <td style="text-align:center" class="prod_id">@reader["NAME"]</td>
-                                    <td>@reader["PHONE_NUM"]</td>
-                                    <td>@reader["MOBILE_NUM"]</td>
-                                    <td>@reader["STATUS"]</td>
-                                    @*<td>
-                                            <button type="button" name="edit_btn" class="btn btn-primary btnUpdate" id="btn_update" data-bs-toggle="modal" data-bs-target="#updateModal">Update</button>
-                                        </td>
-                                        <td>
-                                            <button type="button" name="edit_btn" class="btn btn-danger btnUpdate" id="btn_" data-bs-toggle="modal" data-bs-target="#deleteModal">Delete</button>
-                                        </td>*@
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-                }
-                else
-                {
-                    <p>No records found.</p>
-                }
-            }
-        }
-    }
-}
+<!-- Update Modal -->
 <div class="modal fade" id="updateModal" tabindex="-1" aria-labelledby="updateModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -197,11 +148,63 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <div class="form-group">
-                    <label for="newMobileNumber">New Mobile Number</label>
-                    <input type="text" id="newMobileNumber" class="form-control" placeholder="Enter new mobile number" />
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="update_person_name">Person Name</label>
+                                <input type="text" id="update_person_name" class="form-control" disabled>
+                            </div>
+                            <div class="form-group">
+                                <label for="update_area_code">Area Code</label>
+                                <input type="text" id="update_area_code" class="form-control" disabled>
+                            </div>
+                            <div class="form-group">
+                                <label for="update_phone_num">Phone Number</label>
+                                <input type="text" id="update_phone_num" class="form-control" disabled>
+                            </div>
+                            <div class="form-group">
+                                <label for="update_mobile_num">Mobile Number</label>
+                                <input type="text" id="update_mobile_num" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label for="update_email_add">Email Address</label>
+                                <input type="text" id="update_email_add" class="form-control" disabled>
+                            </div>
+                            <div class="form-group">
+                                <label for="update_status">Status</label>
+                                <select class="custom-select form-control" id="update_status" disabled>
+                                    <option selected>Choose Status</option>
+                                    <option>Active</option>
+                                    <option>Inactive</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="update_house_num">House Number</label>
+                                <input type="text" id="update_house_num" class="form-control" disabled>
+                            </div>
+                            <div class="form-group">
+                                <label for="update_street">Street</label>
+                                <input type="text" id="update_street" class="form-control" disabled>
+                            </div>
+                            <div class="form-group">
+                                <label for="update_city">City</label>
+                                <input type="text" id="update_city" class="form-control" disabled>
+                            </div>
+                            <div class="form-group">
+                                <label for="update_province">Province</label>
+                                <input type="text" id="update_province" class="form-control" disabled>
+                            </div>
+                            <div class="form-group">
+                                <label for="update_zip_code">Zip Code</label>
+                                <input type="number" id="update_zip_code" class="form-control" disabled>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <input type="hidden" id="oldMobileNumber" />
+                <input type="hidden" id="oldMobileNumber">
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -211,6 +214,47 @@
     </div>
 </div>
 
+
+@using (var db = new SqlConnection(conn_str))
+{
+    db.Open();
+    using (var cmd = db.CreateCommand())
+    {
+        cmd.CommandType = CommandType.Text;
+        cmd.CommandText = "SELECT * FROM PHONEBOOK";
+        using (var reader = cmd.ExecuteReader())
+        {
+            if (reader.HasRows)
+            {
+                <table class="table table-striped">
+                    <thead class="bg-secondary text-white">
+                        <tr>
+                            <th width="15%" style="text-align:center">NAME</th>
+                            <th width="10%">PHONE NUMBER</th>
+                            <th width="10%">MOBILE NUMBER</th>
+                            <th width="10%" style="text-align:center">STATUS</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @while (reader.Read())
+                        {
+                            <tr class="items">
+                                <td style="text-align:center" class="prod_id">@reader["NAME"]</td>
+                                <td>@reader["PHONE_NUM"]</td>
+                                <td>@reader["MOBILE_NUM"]</td>
+                                <td style="text-align:center">@reader["STATUS"]</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+            else
+            {
+                <p>No records found.</p>
+            }
+        }
+    }
+}
 
 <script src="~/Scripts/Jquery/jquery-3.7.1.min.js"></script>
 <script src="~/Scripts/myJquery/Create.js"></script>
